@@ -8,19 +8,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import java.awt.SystemColor;
-import java.awt.Color;
 import java.awt.Font;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Window.Type;
 
 public class Crediti extends JDialog implements ActionListener {
 
@@ -79,10 +72,6 @@ public class Crediti extends JDialog implements ActionListener {
 			okButton = new JButton("OK");
 			buttonPane.add(okButton);
 
-			/*
-			 * okButton.addActionListener(new ActionListener() { public void
-			 * actionPerformed(ActionEvent e) { dispose(); } });
-			 */
 			okButton.setActionCommand("OK");
 			okButton.addActionListener(this);
 			getRootPane().setDefaultButton(okButton);

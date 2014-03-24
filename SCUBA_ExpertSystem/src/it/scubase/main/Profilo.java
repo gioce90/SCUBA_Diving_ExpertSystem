@@ -571,9 +571,6 @@ public class Profilo extends JFrame implements ActionListener {
 		try {
 			// maybe TODO ...
 			 //rimuove il template subacqueo che si crea di default per dare spazio al nuovo:
-			/*String exFirstSub=clips.eval("(find-all-facts ((?f subacqueo)) TRUE)"). booo
-			System.out.println(exFirstSub);
-			System.out.println(clips.eval("(retract "+exFirstSub+")"));*/
 			
 			clips.loadFacts(profilo);
 			

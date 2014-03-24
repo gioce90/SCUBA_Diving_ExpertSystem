@@ -88,8 +88,11 @@
                     (relation-asserted start)
                     (valid-answers)
                     (state initial)))
-   (assert (random (mod(random 0 3) 3)))
 
+;   (assert(fattuccio A (random 0 3)))
+;   (assert(fattuccio B (random 0 3)))
+;   (assert(fattuccio C (random 0 3)))
+;   (assert(fattuccio D (random 0 3)))
 )
 
 
@@ -114,10 +117,9 @@
 ;;; *********************
 
 (defrule determine-immersed-state "Determina se l'utente si è mai immerso"
-
    ;(declare(salience 100))
    (logical (start))
-   (not(ever-immersed ?))   ;(seed 1)
+   (not(ever-immersed ?))
    =>
    (assert (UI-state (display EverImmersedQuestion)
                      (relation-asserted ever-immersed)
@@ -127,9 +129,8 @@
 
 (defrule determine-age-diver "Determina l'eta' dell'utente"
    ;(declare(salience 100))
-   
    (logical (start))
-   (not(age-diver ?)) ;(seed 2)
+   (not(age-diver ?))
   =>
    (assert (UI-state (display AgeQuestion)
                      (relation-asserted age-diver)

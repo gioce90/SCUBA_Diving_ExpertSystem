@@ -177,7 +177,7 @@ public class GUI {
 
 		// Listener per i button
 		createButtonListener();
-
+ 
 		// suggestPanel
 		JPanel suggestPanel = new JPanel();
 		GridBagConstraints gbc_commandPanel = new GridBagConstraints();

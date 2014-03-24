@@ -370,7 +370,7 @@ public class SmartPlan implements ActionListener {
 		int età=getAgeDiver(sub);
 		String age;
 		if (età!=0)
-			age = "<p>  > Età: "+età;
+			age = "<p>  > Età: "+età+" anni";
 		else age="<p>  > Età: non pervenuta";
 		
 		switch (subMessage){
@@ -411,19 +411,28 @@ public class SmartPlan implements ActionListener {
 	}
 
 	private String getSpecialtyDiver(PrimitiveValue sub) throws Exception {
-		return sub.getFactSlot("specialty").toString();
+		int size = sub.getFactSlot("specialty").size();
+		String specialty="";
+		for (int i=0;i<size;i++){
+			specialty += "<p>"+scubaResources.getString(
+					sub.getFactSlot("specialty").get(i).toString());
+		}
+		if (specialty.equals(""))
+			specialty=scubaResources.getString("nothing");
+		
+		return specialty;
 	}
 
 	private String getLicenceDiver(PrimitiveValue sub) throws Exception {
-		return sub.getFactSlot("brevetto").toString();
+		return scubaResources.getString(sub.getFactSlot("brevetto").toString());
 	}
 
 	private String getNumberOfDives(PrimitiveValue sub) throws Exception {
-		return sub.getFactSlot("numero-immersioni").toString();
+		return scubaResources.getString(sub.getFactSlot("numero-immersioni").toString());
 	}
 
 	private String getDeepDiver(PrimitiveValue sub) throws Exception {
-		return sub.getFactSlot("max-deep").toString();
+		return scubaResources.getString(sub.getFactSlot("max-deep").toString());
 	}
 
 	private int getAgeDiver(PrimitiveValue sub) throws Exception {
@@ -546,7 +555,13 @@ public class SmartPlan implements ActionListener {
 			} break;
 			
 			case "Confirm": {
-				JOptionPane.showConfirmDialog(jfrm, "Vuoi salvare il profilo prima di continuare?");
+				
+				int result = JOptionPane.showConfirmDialog(jfrm, "Vuoi salvare il profilo prima di continuare?");
+				
+				if (result==JOptionPane.OK_OPTION){
+					//Profilo.
+				}
+					
 				// ATTENZIONE
 				//System.out.println("CONFIRM->(prev " + currentID + ")");
 				
