@@ -20,12 +20,6 @@ import java.awt.Insets;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.FlowLayout;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
  
 
 /**
@@ -246,8 +240,6 @@ public class GUI {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO da fare
-				//new AnimalDemo();
 				new SmartPlan();
 			}
 		});
@@ -291,53 +283,6 @@ public class GUI {
 			}
 		});
 	}
-	
-	
-	
-	
-	
-	// FORSE IN FUTURO
-
-	/**
-	 * Salva archivio su file (sul server)
-	 * 
-	 * @param nomeFile
-	 *            Nome del file
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void salva(String nomeFile) throws FileNotFoundException,
-			IOException {
-		FileOutputStream outFile = new FileOutputStream(nomeFile);
-		ObjectOutputStream outStream = new ObjectOutputStream(outFile);
-		outStream.writeObject(this);
-		outStream.close(); // <- attenzione
-	}
-
-	/**
-	 * Carica archivio da file (sul server)
-	 * 
-	 * @param nomeFile
-	 *            Nome del file
-	 * @return
-	 * @throws FileNotFoundException
-	 *             , IOException, ClassNotFoundException
-	 */
-	public static Object carica(String nomeFile) throws FileNotFoundException,
-			IOException, ClassNotFoundException {
-		FileInputStream inFile = new FileInputStream(nomeFile);
-		ObjectInputStream inStream = new ObjectInputStream(inFile);
-		return inStream.readObject();
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
 }
 
 

@@ -88,6 +88,8 @@
                     (relation-asserted start)
                     (valid-answers)
                     (state initial)))
+   (assert (random (mod(random 0 3) 3)))
+
 )
 
 
@@ -107,10 +109,15 @@
 ;;; * RULES                   *
 ;;; ***************************
 
+;;; *********************
+;;; * Define diver Rule *
+;;; *********************
+
 (defrule determine-immersed-state "Determina se l'utente si è mai immerso"
+
    ;(declare(salience 100))
    (logical (start))
-   (not(ever-immersed ?))
+   (not(ever-immersed ?))   ;(seed 1)
    =>
    (assert (UI-state (display EverImmersedQuestion)
                      (relation-asserted ever-immersed)
@@ -118,11 +125,11 @@
                      (valid-answers No Yes)))
 )
 
-
 (defrule determine-age-diver "Determina l'eta' dell'utente"
    ;(declare(salience 100))
+   
    (logical (start))
-   (not(age-diver ?))
+   (not(age-diver ?)) ;(seed 2)
   =>
    (assert (UI-state (display AgeQuestion)
                      (relation-asserted age-diver)
@@ -187,8 +194,6 @@
                             da-200 da-300 da-400 da-500 da-1000)))
 )
 
-
-;; Define diver
 
 (defrule define-diver-NoExperience ""
    (declare (salience -10))
@@ -261,6 +266,13 @@
                      (type-answer message)
                      (state diver-definition)))
 )
+
+
+
+
+
+
+
 
 ;;;*************************
 ;;;* GUI INTERACTION RULES *

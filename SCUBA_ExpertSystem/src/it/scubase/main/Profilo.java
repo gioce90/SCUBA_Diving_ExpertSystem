@@ -17,9 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTabbedPane;
@@ -160,21 +160,21 @@ public class Profilo extends JFrame implements ActionListener {
 				return (new java.io.File("divers").equals(f));
 			}
 		});
-		chooser.showOpenDialog(null);
 		
-		// operazioni di caricamento:
-		if (chooser.getSelectedFile() != null) {
-			try {
-				loadFromCLP(chooser.getSelectedFile().getAbsolutePath());
-				this.setVisible(true);
-				
-			} catch (NullPointerException e) {
-				e.printStackTrace();
-				System.out.println("Errore qui: loadProfile()");
+		int result = chooser.showOpenDialog(null);
+		
+		if (result==JFileChooser.APPROVE_OPTION){
+			// operazioni di caricamento:
+			if (chooser.getSelectedFile() != null) {
+				try {
+					loadFromCLP(chooser.getSelectedFile().getAbsolutePath());
+					this.setVisible(true);
+					
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					System.out.println("Errore qui: loadProfile()");
+				}
 			}
-		} else {
-			// TODO modificare la NON scelta di un profilo.
-			System.out.println("Ehhhhhhh loadProfile() ... NON scelta di un profilo");
 		}
 		return this;
 	}
@@ -194,29 +194,19 @@ public class Profilo extends JFrame implements ActionListener {
 			
 			if (!nome_file.equals("unknown")){
 				if (saveOnCLP(nome_file))
-					System.out.println("Salvataggio avvenuto con successo!");
+					JOptionPane.showMessageDialog(this, "Salvataggio avvenuto con successo!");
 			} else {
-				JDialog alt = new JDialog();
-				alt.setTitle("ALT!");
-				alt.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				alt.setModal(true);
-				alt.setResizable(false);
-				alt.add(new JLabel("Inserire cognome e nome prima di salvare!"));
-				alt.pack();
-				alt.setLocationRelativeTo(this);
-				alt.setVisible(true);
+				JOptionPane.showMessageDialog(this, "Inserire cognome e nome prima di salvare");
 			}
 			
-			// TODO aggiungere avviso di salvataggio avvenuto
-			
 		} else if (e.getActionCommand().equals("Salva Modifiche")) {
-			System.out.println("gneeeeeee");
+			// TODO
+			System.out.println("Salva modifiche gneeeeeee");
 			//clips = new Environment();
 			//clips.load("scuba.clp");
 			//clips.reset();
 			/*
 			// LETTURA DA FILE
-			// TODO questo è da spostare in Carica, ma per ora lo lasciamo
 			try {
 				BufferedReader buffReader;
 				buffReader = new BufferedReader(new FileReader(nome_file+".clp"));

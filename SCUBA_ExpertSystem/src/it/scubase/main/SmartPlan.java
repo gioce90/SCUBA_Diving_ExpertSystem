@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingUtilities;
@@ -65,6 +66,7 @@ public class SmartPlan implements ActionListener {
 			}
 		});
 	}
+	
 	
 	/*************/
 	/* SmartPlan */
@@ -159,7 +161,6 @@ public class SmartPlan implements ActionListener {
 	}
 	
 	
-	
 	/*************/
 	/* runPlan   */
 	/*************/
@@ -183,7 +184,6 @@ public class SmartPlan implements ActionListener {
 		executionThread = new Thread(runThread);
 		executionThread.start();
 	}
-	
 	
 	
 	/****************/
@@ -311,45 +311,9 @@ public class SmartPlan implements ActionListener {
 				
 				choicesPanel.setLayout(new FlowLayout());
 				
-				// TODO pubblica resoconto del subacqueo (creare una procedura di stampa)
-				
-				String subMessage = validAnswersPV.get(0).stringValue(); // YEAH :D
+				String subMessage = validAnswersPV.get(0).stringValue();
 				PrimitiveValue sub = clips.eval("(find-all-facts ((?f subacqueo)) TRUE)").get(0);
-				
-				String name=getNameDiver(sub);
-				if (!name.isEmpty())
-					name="<p>  > Nome: "+name;
-				String age = "<p>  > Età: "+getAgeDiver(sub);
-				
-				switch (subMessage){
-					case "Esordiente": {
-						choicesPanel.add(new JLabel("<html>"+subMessage+
-								"<p>Subacqueo: "+name+age+"</html>"));
-					} break;
-					case "Sub senza brevetto": {
-						String deep = "<p>  > Profondità massima raggiunta: "+getDeepDiver(sub)+"  metri";
-						String numberDives = "<p>  > Numero di immersioni: "+getNumberOfDives(sub);
-						
-						choicesPanel.add(new JLabel("<html>"+subMessage+"<p>Subacqueo: "+
-								name+age+deep+numberDives+"</html>"));
-					} break;
-					case "Sub con brevetto": {
-						String deep = "<p>  > Profondità massima raggiunta: "+getDeepDiver(sub)+"  metri";
-						String numberDives = "<p>  > Numero di immersioni: "+getNumberOfDives(sub);
-						String licence = "<p>  > Livello brevetto: "+getLicenceDiver(sub);
-						String specialty = "<p>  > Specialità acquisite: "+getSpecialtyDiver(sub);
-						
-						choicesPanel.add(new JLabel("<html>"+subMessage+"<p>Subacqueo: "+
-								name+age+numberDives+deep+licence+specialty+"</html>"));
-					} break;
-				}
-				
-				/*
-				System.out.println("Subacqueo: "+
-						"\n  max-deep: "+deep+
-						"\n  licence: "+licence+
-						"\n  specialty: "+specialty);
-				*/
+				stampDiver(sub, subMessage);
 				
 			} break;
 			
@@ -368,7 +332,6 @@ public class SmartPlan implements ActionListener {
 				choicesPanel.add(calendar);
 				
 			} break;
-			
 			
 		}
 		
@@ -398,6 +361,55 @@ public class SmartPlan implements ActionListener {
 	
 	
 	
+	private void stampDiver(PrimitiveValue sub, String subMessage) throws Exception {
+
+		String name=getNameDiver(sub);
+		if (!name.isEmpty())
+			name="<p>  > Nome: "+name;
+		
+		int età=getAgeDiver(sub);
+		String age;
+		if (età!=0)
+			age = "<p>  > Età: "+età;
+		else age="<p>  > Età: non pervenuta";
+		
+		switch (subMessage){
+		
+			case "Esordiente": {
+				choicesPanel.add(new JLabel("<html>"+subMessage+
+						"<p>Subacqueo: "+name+age+"</html>"));
+			} break;
+			
+			case "Sub senza brevetto": {
+				String deep = "<p>  > Profondità massima raggiunta: "+getDeepDiver(sub)+"  metri";
+				String numberDives = "<p>  > Numero di immersioni: "+getNumberOfDives(sub);
+				
+				choicesPanel.add(new JLabel("<html>"+subMessage+"<p>Subacqueo: "+
+						name+age+deep+numberDives+"</html>"));
+			} break;
+			
+			case "Sub con brevetto": {
+				String deep = "<p>  > Profondità massima raggiunta: "+getDeepDiver(sub)+"  metri";
+				String numberDives = "<p>  > Numero di immersioni: "+getNumberOfDives(sub);
+				String licence = "<p>  > Livello brevetto: "+getLicenceDiver(sub);
+				String specialty = "<p>  > Specialità acquisite: "+getSpecialtyDiver(sub);
+				
+				choicesPanel.add(new JLabel("<html>"+subMessage+"<p>Subacqueo: "+
+						name+age+numberDives+deep+licence+specialty+"</html>"));
+			} break;
+			
+			case "Non sono riuscito a definire la tua esperienza": {
+				choicesPanel.add(new JLabel("<html>È occorso un errore.<p>"+subMessage+"<p>Riprova</html>"));
+				
+				nextButton.setActionCommand("Restart");
+				nextButton.setText(scubaResources.getString("Restart"));
+				prevButton.setVisible(false);
+				confirmButton.setVisible(false);
+				nextButton.setVisible(true);
+			} break;
+		}
+	}
+
 	private String getSpecialtyDiver(PrimitiveValue sub) throws Exception {
 		return sub.getFactSlot("specialty").toString();
 	}
@@ -415,19 +427,20 @@ public class SmartPlan implements ActionListener {
 	}
 
 	private int getAgeDiver(PrimitiveValue sub) throws Exception {
-		Date dateOfBirth=new SimpleDateFormat("dd-MM-yyyy").parse(
-				sub.getFactSlot("data-nascita").toString());
+		String ageString = sub.getFactSlot("data-nascita").toString();
 		int age = 0;
-		
-		Calendar dob = Calendar.getInstance();  
-		dob.setTime(dateOfBirth);  
-		Calendar today = Calendar.getInstance();  
-		age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
-		if (today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) {
-		  age--;
-		} else if (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH)
-		    && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
-		  age--;  
+		if(!ageString.equals("nil")){
+			Date dateOfBirth=new SimpleDateFormat("dd-MM-yyyy").parse(ageString);
+			Calendar dob = Calendar.getInstance();  
+			dob.setTime(dateOfBirth);  
+			Calendar today = Calendar.getInstance();  
+			age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+			if (today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) {
+			  age--;
+			} else if (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH)
+			    && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
+			  age--;  
+			}
 		}
 		return age;
 	}
@@ -442,6 +455,7 @@ public class SmartPlan implements ActionListener {
 		return name;
 	}
 
+	
 	/*********************/
 	/* actionPerformed   */
 	/*********************/
@@ -453,7 +467,6 @@ public class SmartPlan implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	
 	/*********************/
@@ -474,75 +487,76 @@ public class SmartPlan implements ActionListener {
 		/* ========================= */
 		/* Handle the Next button. */
 		/* ========================= */
-		// TODO una switch?
 		
-		if (ae.getActionCommand().equals("Next")) {
-			
-			// TODO sistemare le if
-			if (choicesButtons.getButtonCount()==0
-					&&choicesCheckBoxes.isEmpty()
-					&&!calendar.isShowing()
-					) {
+		switch (ae.getActionCommand()){
+		
+			case "Next": {
 				
-				// ATTENZIONE
-				System.out.println("PRIMO IF  (next " + currentID + ")");
+				// TODO sistemare le if!
 				
-				clips.assertString("(next " + currentID + ")");
-				
-			} else {
-				
-				if (choicesButtons.getButtonCount()!=0){
+				if (choicesButtons.getButtonCount()==0
+						&& choicesCheckBoxes.isEmpty()&&!calendar.isShowing()) {
 					
-					// ATTENZIONE
-					System.out.println("SECONDO IF  (next " + currentID + " "
-							+ choicesButtons.getSelection().getActionCommand() + ")");
+					clips.assertString("(next " + currentID + ")");
+					System.out.println("(next " + currentID + ") --> PRIMO IF ");
 					
-					clips.assertString("(next " + currentID + " "
-							+ choicesButtons.getSelection().getActionCommand() + ")");
-					
-				} else if (!choicesCheckBoxes.isEmpty()){
-					
-					String checkboxes="";
-					Iterator<JCheckBox> I = choicesCheckBoxes.iterator();
-					while (I.hasNext()){
-						JCheckBox jcb = I.next();
-						if (jcb.isSelected()){
-							checkboxes+=jcb.getActionCommand()+" ";
-						}
-					}
-					
-					// ATTENZIONE
-					System.out.println("TERZO IF  (next " + currentID + " " + checkboxes + ")");
-					clips.assertString("(next " + currentID + " " + checkboxes + ")");
 				} else {
 					
-					String date = new SimpleDateFormat("dd-MM-yyyy").format(calendar.getDate());
-					
-					System.out.println("QUARTO IF  (next " + currentID + " " + date + ")");
-					clips.assertString("(next " + currentID + " " + date + ")");
+					if (choicesButtons.getButtonCount()!=0){
+						
+						clips.assertString("(next " + currentID + " "
+								+ choicesButtons.getSelection().getActionCommand() + ")");
+						System.out.println("(next " + currentID + " "
+								+ choicesButtons.getSelection().getActionCommand() + ") --> SECONDO IF ");
+						
+					} else if (!choicesCheckBoxes.isEmpty()){
+						
+						String checkboxes="";
+						Iterator<JCheckBox> I = choicesCheckBoxes.iterator();
+						while (I.hasNext()){
+							JCheckBox jcb = I.next();
+							if (jcb.isSelected()){
+								checkboxes+=jcb.getActionCommand()+" ";
+							}
+						}
+						clips.assertString("(next " + currentID + " " + checkboxes + ")");
+						System.out.println("(next " + currentID + " " + checkboxes + ") --> TERZO IF");
+						
+					} else {
+						
+						String date = new SimpleDateFormat("dd-MM-yyyy").format(calendar.getDate());
+						clips.assertString("(next " + currentID + " " + date + ")");
+						System.out.println("(next " + currentID + " " + date + ") --> QUARTO IF");
+					}
 				}
-			}
+				
+				runPlan();
+			} break;
 			
-			runPlan();
-		} else if (ae.getActionCommand().equals("Restart")) {
-			clips.reset();
-			runPlan();
-		} else if (ae.getActionCommand().equals("Prev")) {
+			case "Restart": {
+				clips.reset();
+				runPlan();
+			} break;
 			
-			// ATTENZIONE
-			System.out.println("(prev " + currentID + ")");
+			case "Prev": {
+				clips.assertString("(prev " + currentID + ")");
+				System.out.println("(prev " + currentID + ")");
+				
+				runPlan();
+			} break;
 			
-			clips.assertString("(prev " + currentID + ")");
-			runPlan();
-		} else if (ae.getActionCommand().equals("Confirm")) {
+			case "Confirm": {
+				JOptionPane.showConfirmDialog(jfrm, "Vuoi salvare il profilo prima di continuare?");
+				// ATTENZIONE
+				//System.out.println("CONFIRM->(prev " + currentID + ")");
+				
+				//clips.assertString("(prev " + currentID + ")");
+				
+				//runPlan();
+			} break;
 			
-			// ATTENZIONE
-			//System.out.println("CONFIRM->(prev " + currentID + ")");
-			
-			//clips.assertString("(prev " + currentID + ")");
-			
-			//runPlan();
 		}
+		
 	}
 	
 	
