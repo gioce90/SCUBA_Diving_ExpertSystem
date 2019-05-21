@@ -8,6 +8,6 @@ Download the projects:
   - CLIPSJNI
   - SCUBA_ExpertSystem
 
-... in your workspace. Then, create into project CLIPSJNI the "src" folder (yes, is stupid, I known...)
+... in your workspace. Then, create into project CLIPSJNI the "src" folder
 
 Now, you can play SCUBA_ExpertSystem project. Enjoy.
